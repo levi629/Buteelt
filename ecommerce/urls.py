@@ -21,8 +21,11 @@ from ecommerce import settings
 from django.conf.urls.static import static
 # from django.conf import settings
 from shop_app.views import (
-    index, register, cart, dashboard, order_complete, place_order,
+    index, register, dashboard, order_complete, place_order,
     product_detail, search_result, store, signin
+)
+from carts.views import (
+    cart, add_cart,remove_cart_item, reduce_cart_item
 )
 
 urlpatterns = [
@@ -30,9 +33,12 @@ urlpatterns = [
     path('', index, name='index'),
     path('register/', register, name='register'),
     path('signin/', signin, name='signin'),
+    path('card', cart, name='cart'),
+    path('card/add/<int:product_id>/', add_cart, name='add_cart'),
+    path('card/remove/<int:product_id>/', remove_cart_item, name='remove_cart_item'),
+    path('card/reduce/<int:product_id>/', reduce_cart_item, name='reduce_cart_item'),
     path('<slug:category_slug>', store, name='store'),
     path('<slug:category_slug>/<slug:product_slug>', product_detail, name='product_detail'),
-    path('cart/', cart, name='cart'),
     path('place-order/', place_order, name='place_order'),
     path('order-complete/', order_complete, name='order_complete'),
     path('dashboard/', dashboard, name='dashboard'),    
