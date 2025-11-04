@@ -1,6 +1,7 @@
 from django.shortcuts import render , get_object_or_404
 from django.core.paginator import Paginator
 from .models import Category, Product
+from django.db.models import Q
 import sqlite3
 # Create your views here.
 def index(request):
@@ -27,35 +28,44 @@ def register(request):
 #     return render(request , "search-result.html", {'result' : prod, "count": len(prod)})
 
 def search_result(request):
-    ser = request.GET.get("q", "").strip()
-    cat = Category.objects.all()
+    ser = request.GET.get("keyword", "").strip()
+    products = Product.objects.filter(is_available=True)
+    
     if ser:
-        products = Product.objects.filter(product_name__icontains=ser, is_available=True).order_by('id')
+        products = products.filter(
+            Q(product_name__icontains=ser) | Q(description__icontains=ser)
+        ).order_by('id')
     else:
         products = Product.objects.all()
     paginator = Paginator(products, 3) 
-    page = request.GET.get('page')
+    page = request.GET.get('page')  
     paged_products = paginator.get_page(page)
     
-    return render(request , "search-result.html", {'result' : paged_products, "count": len(products)})
+    return render(request , "store.html", {'result' : paged_products, "count": len(products), 'keyword': ser})
 
 def signin(request):
     return render(request , "signin.html")
 
 def store(request, category_slug=None):
-    categories = None
-    products = None
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    
+    products = Product.objects.filter(is_available=True).order_by('id')
     if category_slug != "None":
         categories = Category.objects.get(slug=category_slug)
-        products = Product.objects.filter(category=categories, is_available=True)
+        products = products.filter(category=categories, is_available=True)
         product_count = products.count()
     else:
         products = Product.objects.all().filter(is_available=True).order_by('id')
-
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    if max_price and max_price != '2000':
+        products = products.filter(price__lte=max_price)
+        
     product_count = products.count()
     paginator = Paginator(products, 6)
     page = request.GET.get('page')
     paged_products = paginator.get_page(page)
-    return render(request , "store.html", {'categories' : categories, 'result' : paged_products, "count": product_count})
+    return render(request , "store.html", {'result' : paged_products, "count": product_count})
 
 
