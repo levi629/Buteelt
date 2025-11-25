@@ -108,21 +108,50 @@ $(document).ready(function() {
             </div>
         </form>
     </div>
-    <div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3">
-        <div class="d-flex justify-content-end mb-3 mb-lg-0">
+<div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3">
+    <div class="d-flex justify-content-end mb-3 mb-lg-0">
+
+        {% if request.user.is_authenticated %}
+            <!-- ------------------ НЭВТЭРСЭН ҮЕД ------------------ -->
+            <div class="widget-header">
+                <small class="title text-muted">Welcome, {{ request.user.first_name }}!</small>
+                <div>
+                    <a href="{% url 'User_logout' %}">Logout</a>
+                </div>
+            </div>
+
+            <!-- Хэрэглэгчийн зураг -->
+            <a href="#" class="widget-header pl-3 ml-3">
+                {% if request.user.account.pro_image %}
+                    <img src="{{ request.user.account.pro_image.url }}" 
+                         class="rounded-circle border" 
+                         width="40" height="40" alt="profile">
+                {% else %}
+                    <img src="{% static 'images/default-avatar.png' %}" 
+                         class="rounded-circle border" width="40" height="40">
+                {% endif %}
+            </a>
+
+        {% else %}
             <div class="widget-header">
                 <small class="title text-muted">Welcome guest!</small>
-                <div> 
-                    <a href="{% url 'signin' %}">Sign in</a> <span class="dark-transp"> | </span>
+                <div>
+                    <a href="{% url 'signin' %}">Sign in</a>
+                    <span class="dark-transp"> | </span>
                     <a href="{% url 'register' %}">Register</a>
                 </div>
             </div>
-            <a href="{% url 'cart' %}" class="widget-header pl-3 ml-3">
-                <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
-                <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
-            </a>
-        </div>
+        {% endif %}
+        <a href="{% url 'cart' %}" class="widget-header pl-3 ml-3">
+            <div class="icon icon-sm rounded-circle border">
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+            <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
+        </a>
+
     </div>
+</div>
+
 </div>
     </div>
 </section>
@@ -132,6 +161,7 @@ $(document).ready(function() {
 <!-- Main content block -->
 <section class="section-content padding-y bg">
   <div class="container">
+        {% include 'alert.html' %}
     {% block content %}
     {% endblock %}
   </div>

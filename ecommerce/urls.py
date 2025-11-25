@@ -21,18 +21,20 @@ from ecommerce import settings
 from django.conf.urls.static import static
 # from django.conf import settings
 from shop_app.views import (
-    index, register, dashboard, order_complete, place_order,
-    product_detail, search_result, store, signin
+    index, dashboard, order_complete, place_order,
+    product_detail, search_result, store
 )
 from carts.views import (
     cart, add_cart,remove_cart_item, reduce_cart_item
 )
 
+from accounts.views import User_login, User_register, User_logout
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
-    path('register/', register, name='register'),
-    path('signin/', signin, name='signin'),
+    path('register/', User_register, name='register'),
+    path('signin/', User_login, name='signin'),
     path('card', cart, name='cart'),
     path('card/add/<int:product_id>/', add_cart, name='add_cart'),
     path('card/remove/<int:product_id>/', remove_cart_item, name='remove_cart_item'),
@@ -44,4 +46,5 @@ urlpatterns = [
     path('order-complete/', order_complete, name='order_complete'),
     path('dashboard/', dashboard, name='dashboard'),    
     path('search/', search_result, name='search_result'),
+    path('logout/', User_logout, name='User_logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
