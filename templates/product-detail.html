@@ -5,79 +5,115 @@
 
 <!-- ============================ COMPONENT 1 ================================= -->
 <div class="card">
-	<div class="row no-gutters">
-		<aside class="col-md-6">
-			<article class="gallery-wrap"> 
-				<div class="img-big-wrap">
-				   <a href="#"><img src="{{ product.images.url }}" alt="{{ product.product_name }}"></a>
-				</div>
-			</article>
-		</aside>
+    <div class="row no-gutters">
+        
+        <aside class="col-md-6">
+            <article class="gallery-wrap"> 
+                
+                <!-- Big Image -->
+                <div class="img-big-wrap mb-3">
+                    <a href="#">
+                        <img id="mainImage" src="{{ product.images.url }}" class="img-fluid" alt="{{ product.product_name }}">
+                    </a>
+                </div>
 
-		<main class="col-md-6 border-left">
-			<article class="content-body">
+                <!-- Thumbnails -->
+                <div class="d-flex">
 
-				<h2 class="title">{{ product.product_name }}</h2>
+                    <!-- === Main Product Image as Thumbnail === -->
+                    <div class="mr-2">
+                        <img 
+                            src="{{ product.images.url }}" 
+                            class="thumbnail border"
+                            style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
+                            onclick="changeImage('{{ product.images.url }}', this)"
+                        >
+                    </div>
 
-				<div class="mb-3"> 
-					<var class="price h4">${{ product.price }}</var> 
-				</div> 
+                    <!-- === Additional Images from ImageGallery === -->
+                    {% for img in product_images %}
+                        <div class="mr-2">
+                            <img 
+                                src="{{ img.image.url }}" 
+                                class="thumbnail border"
+                                style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
+                                onclick="changeImage('{{ img.image.url }}', this)"
+                            >
+                        </div>
+                    {% endfor %}
 
-				<p>{{ product.description }}</p>
+                </div>
 
-				<hr>
+            </article>
+        </aside>
 
-				<!-- Example of options -->
-				<div class="row">
-					<div class="item-option-select">
-						<h6>Choose Color</h6>
-						<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-						  <label class="btn btn-light active">
-						    <input type="radio" checked> Default
-						  </label>
-						</div> 
-					</div>
-				</div>
+        <main class="col-md-6 border-left">
+            <article class="content-body">
 
-				<hr>
-				{%if product.stock == 0%}
-				<p class="text-danger">Out of Stock</p>
-				{%else%}	
-				<!-- Change this link later to 'add_to_cart' -->
-				<a href="{% url 'add_cart' product.id %}" class="btn btn-primary">
-					<span class="text">Add to cart</span> 
-					<i class="fas fa-shopping-cart"></i>
-				</a>
-				{%endif%}
+                <h2 class="title">{{ product.product_name }}</h2>
 
-			</article>
-		</main>
-	</div>
+                <div class="mb-3"> 
+                    <var class="price h4">${{ product.price }}</var> 
+                </div> 
+
+                <p>{{ product.description }}</p>
+
+                <hr>
+
+                {% if product.stock == 0 %}
+                    <p class="text-danger">Out of Stock</p>
+                {% else %}    
+                    <a href="{% url 'add_cart' product.id %}" class="btn btn-primary">
+                        <span class="text">Add to cart</span> 
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                {% endif %}
+
+            </article>
+        </main>
+    </div>
 </div>
-<!-- ============================ COMPONENT 1 END .// ================================= -->
+<!-- ============================ COMPONENT 1 END ================================= -->
 
 <br>
 
 <div class="row">
-	<div class="col-md-9">
-		<header class="section-heading">
-			<h3>Customer Reviews</h3>  
-		</header>
+    <div class="col-md-9">
+        <header class="section-heading">
+            <h3>Customer Reviews</h3>  
+        </header>
 
-		<article class="box mb-3">
-			<div class="icontext w-100">
-				<img src="{% static 'images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle">
-				<div class="text">
-					<span class="date text-muted float-md-right">24.04.2020</span>  
-					<h6 class="mb-1">Mike John</h6>
-				</div>
-			</div>
-			<div class="mt-3">
-				<p>Dummy comment Lorem ipsum dolor sit amet...</p>	
-			</div>
-		</article>
-	</div>
+        <article class="box mb-3">
+            <div class="icontext w-100">
+                <img src="{% static 'images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle">
+                <div class="text">
+                    <span class="date text-muted float-md-right">24.04.2020</span>  
+                    <h6 class="mb-1">Mike John</h6>
+                </div>
+            </div>
+            <div class="mt-3">
+                <p>Dummy comment Lorem ipsum...</p>    
+            </div>
+        </article>
+
+    </div>
 </div>
 
 </div>
+
+<!-- ================= JS for image switching ================= -->
+<script>
+    function changeImage(imageUrl, thumbElement) {
+        document.getElementById("mainImage").src = imageUrl;
+
+        // Remove active border from all thumbnails
+        document.querySelectorAll(".thumbnail").forEach(img => {
+            img.style.border = "1px solid #ddd";
+        });
+
+        // Add active border to selected thumbnail
+        thumbElement.style.border = "2px solid #007bff";
+    }
+</script>
+
 {% endblock %}

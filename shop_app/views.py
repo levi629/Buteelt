@@ -1,8 +1,7 @@
 from django.shortcuts import render , get_object_or_404
 from django.core.paginator import Paginator
-from .models import Category, Product
+from .models import Category, Product, imageGallery
 from django.db.models import Q
-import sqlite3
 # Create your views here.
 def index(request):
     cat = Category.objects.all()
@@ -16,9 +15,16 @@ def order_complete(request):
     return render(request , "order_complete.html")
 def place_order(request):
     return render(request , "place-order.html")
+
 def product_detail(request, category_slug, product_slug):
     pro = Product.objects.get(slug=product_slug, category__slug=category_slug)
-    return render(request , "product-detail.html", {'product': pro})
+    product_images = imageGallery.objects.filter(product=pro)
+
+    return render(request, "product-detail.html", {
+        "product": pro,
+        "product_images": product_images
+    })
+
 def register(request):
     return render(request , "register.html")
 # def search_result(request):
